@@ -44,22 +44,24 @@ class UNET(nn.Module):
         self.downs = nn.ModuleList()
         self.pool = nn.MaxPool2d(kernel_size=2, stride=2)
 
-        # Down part of UNET
+        """Down part of UNET
+        """
         for feature in features:
             self.downs.append(DoubleConv(in_channels, feature))
             in_channels = feature
 
-        # Up part of UNET
+        """ Up part of UNET
+        """
         for feature in reversed(features):
-            self.ups.append(
-                nn.ConvTranspose2d(
-                    feature*2, feature, kernel_size=2, stride=2,
-                )
-            )
+            self.ups.append( nn.ConvTranspose2d(feature*2, feature, kernel_size=2, stride=2),   # de-convolution; (ref) https://kangbk0120.github.io/articles/2017-08/dcgan-pytorch
+                                                                                                # 필터 사이즈를 키우는 용도 (ref) https://pytorch.org/docs/stable/generated/torch.nn.ConvTranspose2d.html
+                            ) # 해당 모듈을 nn.ModuleList 에 더하기 
+
             self.ups.append(DoubleConv(feature*2, feature))
 
         self.bottleneck = DoubleConv(features[-1], features[-1]*2)
         self.final_conv = nn.Conv2d(features[0], out_channels, kernel_size=1)
+
 
     def forward(self, x):
         skip_connections = []
@@ -70,15 +72,15 @@ class UNET(nn.Module):
             x = self.pool(x)
 
         x = self.bottleneck(x)
-        skip_connections = skip_connections[::-1]
+        skip_connections = skip_connections[::-1]  # 맨 뒤에서 부터 역순으로 순회하기 
 
         for idx in range(0, len(self.ups), 2):
             x = self.ups[idx](x)
             skip_connection = skip_connections[idx//2]
 
             if x.shape != skip_connection.shape:
-                x = TF.resize(x, size=skip_connection.shape[2:])
-
+                x = TF.resize(x, size=skip_connection.shape[2:])    # (ref) https://www.programcreek.com/python/example/124275/torchvision.transforms.functional.resize
+                                                                    # (ref) https://discuss.pytorch.org/t/transforms-resize-equivalent-of-fivecrop/109298/2
             concat_skip = torch.cat((skip_connection, x), dim=1)
             x = self.ups[idx+1](concat_skip)
 
