@@ -2,11 +2,10 @@ download the data from kaggle and put in folders similar to the video, specifica
 - link: https://www.kaggle.com/c/carvana-image-masking-challenge/data
 
 folders:
-
-- train_set
+  train_set:
   - images 
   - masks
-- val_set
+  val_set:
   - images 
   - masks
 
