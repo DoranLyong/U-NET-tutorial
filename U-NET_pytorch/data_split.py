@@ -25,6 +25,11 @@ DATAESTS = [ 'train_set', 'val_set' ]
 
 #%%
 def get_names(path_list):
+    """ Example_ 
+        path = '../../data/29bb3ece3180_11.jpg
+        path.split('/')[-1].split('.')[0] == '29bb3ece3180_11'
+    """
+
     name_list = [i.split('/')[-1].split('.')[0] for i in path_list]
     
 

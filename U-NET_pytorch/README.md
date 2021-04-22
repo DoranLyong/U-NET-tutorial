@@ -2,6 +2,9 @@
 1. Download a dataset from here -> [link](https://www.kaggle.com/c/carvana-image-masking-challenge/data)
 2. Extract the download file into ```data``` directory. 
 3. Then, run the ```data_split.py``` in order to split the dataset into 'train_set' and 'val_set'; (8:2 ratio). 
+    ```bash 
+    ~$ python data_split.py
+    ```
 
 <br/>
 
