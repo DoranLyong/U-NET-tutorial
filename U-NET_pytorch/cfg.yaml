@@ -1,0 +1,24 @@
+# google example (ref) https://cloud.google.com/ai-platform/training/docs/using-hyperparameter-tuning#python
+# syntax (ref) https://docs.ansible.com/ansible/latest/reference_appendices/YAMLSyntax.html
+# syntax (ref) https://polyaxon.com/docs/intro/quick-start/hyperparameter-tuning/
+# example (ref) https://lejewk.github.io/yaml-syntax/
+
+trainingInput:
+  NUM_WORKERS : 2
+  DEVICE :
+    CUDA : true 
+  PIN_MEMORY : true  # (ref) https://discuss.pytorch.org/t/when-to-set-pin-memory-to-true/19723
+hyperparams:
+  LEARNING_RATE : 1e-4
+  BATCH_SIZE : 16
+  NUM_EPOCHS : 3
+  IMAGE_HEIGHT : 160   # 1280 originally
+  IMAGE_WIDTH : 240    # 1918 originally
+  LOAD_MODEL : false   # loading the pre-trained LOAD_MODEL
+  
+
+dataPath:
+  TRAIN_IMG_DIR : "./data/train_images/"
+  TRAIN_MASK_DIR : "./data/train_masks/"
+  VAL_IMG_DIR : ".data/val_images/"
+  VAL_MASK_DIR : ".data/val_masks/"
