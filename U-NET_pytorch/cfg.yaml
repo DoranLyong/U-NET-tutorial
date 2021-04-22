@@ -23,3 +23,6 @@ dataPath:
   TRAIN_MASK_DIR : 'data/train_set/masks/'
   VAL_IMG_DIR : 'data/val_set/images/'
   VAL_MASK_DIR : 'data/val_set/masks/'
+
+
+  
