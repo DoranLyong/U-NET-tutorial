@@ -27,8 +27,8 @@ from utils import ( get_loaders,
                 )
 
 
-@hydra.main(config_name='./cfg.yaml')
-def train_fn(cfg: DictConfig, train_loader, model, optimizer, loss_fn, scaler, DEVICE, cur_epoch):
+
+def train_fn(train_loader, model, optimizer, loss_fn, scaler, DEVICE, BATCH_SIZE, NUM_EPOCHS,cur_epoch):
 
     # (ref) https://github.com/DoranLyong/DeepLearning-model-factory/blob/master/ML_tutorial/PyTorch/Basics/lr_scheduler_tutorial.py
     loop = tqdm(enumerate(train_loader), total=len(train_loader))  
@@ -37,8 +37,8 @@ def train_fn(cfg: DictConfig, train_loader, model, optimizer, loss_fn, scaler, D
         """Get data to cuda if possible
         """
         data = data.to(device=DEVICE)  # 미니 베치 데이터를 device 에 로드 
-        targets = targets.float().unsqueeze(1).to(device=DEVICE)  # 레이블 for supervised learning 
-                                                                  # [B, 1, H, W] -> [B, H, W]
+        targets = targets.float().unsqueeze(1).to(device=DEVICE)    # 레이블 for supervised learning 
+                                                                    # [B, 1, H, W] -> [B, H, W]
 
         """ Forward 
         """
@@ -60,12 +60,10 @@ def train_fn(cfg: DictConfig, train_loader, model, optimizer, loss_fn, scaler, D
         """ Progress bar with tqdm
             (ref) https://github.com/DoranLyong/VGG-tutorial/blob/main/VGG_pytorch/VGG_for_CIFAR10.py
         """
-        loop.set_description(f"Epoch [{cur_epoch}/{cfg.hyperparams.NUM_EPOCHS}], LR={ optimizer.param_groups[0]['lr'] :.1e}")
+        loop.set_description(f"Epoch [{cur_epoch}/{NUM_EPOCHS}], LR={ optimizer.param_groups[0]['lr'] :.1e}")
 
-        if batch_idx % cfg.hyperparams.BATCH_SIZE == 0:  # 결과 표시 주기 
+        if batch_idx % BATCH_SIZE == 0:  # 결과 표시 주기 
             loop.set_postfix( acc=(predictions == targets).sum().item() / predictions.size(0), loss=loss.item(),  batch=batch_idx)
-
-
 
 
 
@@ -123,9 +121,9 @@ def main(cfg: DictConfig):
 
     """ Loss and optimizer  
     """
-    loss_fn = nn.BCEWithLogitsLoss() # Binary-CrossEntropy + sigmoid layer ; 클래스가 2개인 binary case에 대한 학습용 
-                                     # (ref) https://nuguziii.github.io/dev/dev-002/
-                                     # (ref) https://youtu.be/IHq1t7NxS8k?t=2199
+    loss_fn = nn.BCEWithLogitsLoss()    # Binary-CrossEntropy + sigmoid layer ; 클래스가 2개인 binary case에 대한 학습용 
+                                        # (ref) https://nuguziii.github.io/dev/dev-002/
+                                        # (ref) https://youtu.be/IHq1t7NxS8k?t=2199
     optimizer = optim.Adam(model.parameters(), lr=cfg.hyperparams.LEARNING_RATE)
 
     
@@ -143,7 +141,7 @@ def main(cfg: DictConfig):
                                             val_transforms,                                            
                                             cfg.trainingInput.NUM_WORKERS,
                                             cfg.trainingInput.PIN_MEMORY,
-                                )
+                                        )
 
     """ Gradient Scaling
         (ref) https://pytorch.org/docs/stable/amp.html#gradient-scaling
@@ -155,9 +153,12 @@ def main(cfg: DictConfig):
     """ Start the training-loop
     """                  
     for epoch in range(cfg.hyperparams.NUM_EPOCHS):
-        train_fn(train_loader=train_loader, model=model, optimizer=optimizer, 
-                 loss_fn=loss_fn, scaler=scaler, DEVICE=DEVICE, cur_epoch=epoch,
-                 )
+        train_fn(train_loader, model, optimizer, 
+                loss_fn, scaler, DEVICE, 
+                cfg.hyperparams.BATCH_SIZE, 
+                cfg.hyperparams.NUM_EPOCHS, 
+                epoch
+                )
     
 
 

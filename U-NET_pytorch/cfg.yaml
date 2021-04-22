@@ -18,7 +18,7 @@ hyperparams:
   
 
 dataPath:
-  TRAIN_IMG_DIR : "./data/train_images/"
-  TRAIN_MASK_DIR : "./data/train_masks/"
-  VAL_IMG_DIR : ".data/val_images/"
-  VAL_MASK_DIR : ".data/val_masks/"
+  TRAIN_IMG_DIR : 'data/train_set/images/'
+  TRAIN_MASK_DIR : 'data/train_set/masks/'
+  VAL_IMG_DIR : 'data/val_set/images/'
+  VAL_MASK_DIR : 'data/val_set/masks/'

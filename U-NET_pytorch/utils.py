@@ -9,6 +9,9 @@ import os
 import torch
 import torchvision
 from torch.utils.data import DataLoader # Gives easier dataset management and creates mini batches
+from hydra import utils  # output/working directory (ref) https://hydra.cc/docs/tutorials/basic/running_your_app/working_directory/#internaldocs-banner
+from colorama import Back, Style # 텍스트 컬러 출력 (ref) https://stackoverflow.com/questions/287871/how-to-print-colored-text-to-the-terminal
+
 
 from dataset import CarvanaDataset
 
@@ -29,11 +32,18 @@ def get_loaders(
     pin_memory=True,
     
 ):
-    print(f"train_dir:{train_dir}")
-    print(f"cwd: {os.getcwd()}")
+    print("*** | Data loading... | ***")
+    """ Output/Working directory 
+        (ref) https://hydra.cc/docs/tutorials/basic/running_your_app/working_directory/#internaldocs-banner
+    """ 
+    print(f"train_dir: {Back.GREEN} {utils.to_absolute_path(train_maskdir)} {Style.RESET_ALL}")
+    print(f"train_maskdir: {Back.GREEN} {utils.to_absolute_path(train_maskdir)} {Style.RESET_ALL}")
+    print(f"val_dir: {Back.MAGENTA} {utils.to_absolute_path(val_dir)} {Style.RESET_ALL}")
+    print(f"val_maskdir: {Back.MAGENTA} {utils.to_absolute_path(val_maskdir)} {Style.RESET_ALL}")
+
     train_ds = CarvanaDataset(
-        image_dir=train_dir,
-        mask_dir=train_maskdir,
+        image_dir=utils.to_absolute_path(train_dir),
+        mask_dir=utils.to_absolute_path(train_maskdir),
         transform=train_transform,
     )
 
@@ -46,8 +56,8 @@ def get_loaders(
     )
 
     val_ds = CarvanaDataset(
-        image_dir=val_dir,
-        mask_dir=val_maskdir,
+        image_dir=utils.to_absolute_path(val_dir),
+        mask_dir=utils.to_absolute_path(val_maskdir),
         transform=val_transform,
     )
 

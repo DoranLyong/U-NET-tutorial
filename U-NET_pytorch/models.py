@@ -92,7 +92,7 @@ class UNET(nn.Module):
                 x = TF.resize(x, size=skip_connection.shape[2:])    # [B, C, H, W] (ref) https://www.programcreek.com/python/example/124275/torchvision.transforms.functional.resize
                                                                     # (ref) https://discuss.pytorch.org/t/transforms-resize-equivalent-of-fivecrop/109298/2
                                                                     # (ref) https://pytorch.org/vision/master/transforms.html#torchvision.transforms.functional.resize
-                                                                    # Type Error (ref) https://discuss.pytorch.org/t/torchvision-transforms-functional-normalize-throws-error-img-should-be-pil-image-got-class-torch-tensor/90970
+                                                                    # Type Error 문제 ; torchvision 버전 때문임 (ref) https://discuss.pytorch.org/t/torchvision-transforms-functional-normalize-throws-error-img-should-be-pil-image-got-class-torch-tensor/90970
             concat_skip = torch.cat((skip_connection, x), dim=1)
             x = self.ups[idx+1](concat_skip)
 
