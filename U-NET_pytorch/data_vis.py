@@ -43,7 +43,7 @@ print(mask.shape)
 
 #%%
 
-""" Method2 
+""" Method2 : Crop 
     (ref) https://stackoverflow.com/questions/64076134/how-to-display-a-ground-truth-image-segmentation-mask-image-in-python
 """
 masked = image.copy()
@@ -51,11 +51,27 @@ masked[mask == 0] = 0
 cv2.imshow("(Method2) masked", masked)
 
 
-""" Method3
+""" Method3 : Color overlay 
     (ref) https://stackoverflow.com/questions/9193603/applying-a-coloured-overlay-to-an-image-in-either-pil-or-imagemagik
+    (ref) https://www.kaggle.com/purplejester/showing-samples-with-segmentation-mask-overlay
 """
+color: Tuple[int, int, int] = (255, 0, 0)
+alpha: float = 0.5
+
+mask_anno = np.where(mask == 1) # booelan mask 
+
+out = image.copy()
+img_layer = image.copy()
+img_layer[mask_anno] = color # broadcasting the color values in each channel
+out = cv2.addWeighted(img_layer, alpha, out, 1 - alpha, 0, out)
+
+cv2.imshow("(Method3) color overlayed", out)
 
 
+""" Method4 : Contour with color overlay 
+    (ref) https://www.programmersought.com/article/33965071602/
+    (ref) https://www.aiuai.cn/aifarm276.html
+"""
 
 
 # %% Display 
