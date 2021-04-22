@@ -5,6 +5,10 @@
     ```bash 
     ~$ python data_split.py
     ```
+4. For checking the dataset with visualization (ongoing)
+    ```bash
+    ~$ python data_vis.py
+    ```
 
 <br/>
 
