@@ -29,7 +29,7 @@ from utils import ( get_loaders,
 
 
 
-def train_fn(train_loader, model, optimizer, loss_fn, scaler, DEVICE, BATCH_SIZE, NUM_EPOCHS,cur_epoch):
+def train_fn(train_loader, model, optimizer, loss_fn, scaler, DEVICE, BATCH_SIZE, NUM_EPOCHS, cur_epoch):
 
     # (ref) https://github.com/DoranLyong/DeepLearning-model-factory/blob/master/ML_tutorial/PyTorch/Basics/lr_scheduler_tutorial.py
     loop = tqdm(enumerate(train_loader), total=len(train_loader))  
