@@ -8,13 +8,14 @@ trainingInput:
   DEVICE :
     CUDA : true 
   PIN_MEMORY : true  # (ref) https://discuss.pytorch.org/t/when-to-set-pin-memory-to-true/19723
+  LOAD_MODEL : false   # loading the pre-trained LOAD_MODEL
 hyperparams:
   LEARNING_RATE : 1e-4
   BATCH_SIZE : 16
   NUM_EPOCHS : 3
   IMAGE_HEIGHT : 160   # 1280 originally
   IMAGE_WIDTH : 240    # 1918 originally
-  LOAD_MODEL : false   # loading the pre-trained LOAD_MODEL
+  
   
 
 dataPath:

@@ -6,7 +6,7 @@ Hydra 사용 하는 방법 (ref) https://towardsdatascience.com/complete-tutoria
 """
 
 #%%
-
+from pathlib import Path 
 
 from tqdm import tqdm 
 import yaml
@@ -22,8 +22,9 @@ from albumentations.pytorch import ToTensorV2
 
 from models import UNET
 from utils import ( get_loaders,
-
-
+                    check_accuracy,
+                    save_checkpoint,
+                    save_predictions_as_imgs,
                 )
 
 
@@ -38,7 +39,8 @@ def train_fn(train_loader, model, optimizer, loss_fn, scaler, DEVICE, BATCH_SIZE
         """
         data = data.to(device=DEVICE)  # 미니 베치 데이터를 device 에 로드 
         targets = targets.float().unsqueeze(1).to(device=DEVICE)    # 레이블 for supervised learning 
-                                                                    # [B, 1, H, W] -> [B, H, W]
+                                                                    # gray scale 이미지이기 때문에 C 값은 없음
+                                                                    # [B, C=1, H, W] -> [B, H, W]
 
         """ Forward 
         """
@@ -140,7 +142,7 @@ def main(cfg: DictConfig):
                                             train_transform, 
                                             val_transforms,                                            
                                             cfg.trainingInput.NUM_WORKERS,
-                                            cfg.trainingInput.PIN_MEMORY,
+                                            cfg.trainingInput.PIN_MEMORY, # 이거 처음보는데 pin_memory에 대해 더 알아볼 것 
                                         )
 
     """ Gradient Scaling
@@ -149,22 +151,46 @@ def main(cfg: DictConfig):
     scaler = torch.cuda.amp.GradScaler()      
 
 
+    """ Load the checkpoint 
+    """
+    if cfg.trainingInput.LOAD_MODEL:
+        checkpoint = torch.load("my_checkpoint.pth.tar") # (ref) https://pytorch.org/docs/stable/generated/torch.load.html#torch.load
+        load_checkpoint(checkpoint, model, optimizer)
+
+
 
     """ Start the training-loop
     """                  
     for epoch in range(cfg.hyperparams.NUM_EPOCHS):
+
+        # Run training
         train_fn(train_loader, model, optimizer, 
                 loss_fn, scaler, DEVICE, 
                 cfg.hyperparams.BATCH_SIZE, 
                 cfg.hyperparams.NUM_EPOCHS, 
                 epoch
                 )
+
+        # save model         
+        checkpoint = {  "state_dict": model.state_dict(),
+                        "optimizer":optimizer.state_dict(),
+                    }  # (ref) https://github.com/DoranLyong/DeepLearning-model-factory/blob/master/ML_tutorial/PyTorch/Basics/06_model_loadsave_CNN.py
+        
+        save_checkpoint(checkpoint)
+
+        # Validation test 
+        check_accuracy(val_loader, model, device=DEVICE)
+
+
+        # print some examples to a folder
+        save_predictions_as_imgs( val_loader, model, folder="saved_pred_images/", device=DEVICE, cur_epoch=epoch  )
     
 
 
 if __name__ == "__main__":
 
-
+    SAVE_PRED_DIR = Path('saved_pred_images')  # 확인용 결과 저장 디렉토리 
+    SAVE_PRED_DIR.mkdir(parents=True, exist_ok=True) 
 
     main()     
 

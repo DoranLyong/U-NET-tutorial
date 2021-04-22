@@ -6,6 +6,7 @@ Data spliting
 from pathlib import Path 
 import os.path as osp
 import os
+import sys 
 from glob import glob
 import shutil  # sh 명령어를 사용할 수 있는 유틸리티 (ref) https://code.tutsplus.com/ko/tutorials/file-and-directory-operations-using-python--cms-25817
 
@@ -16,7 +17,9 @@ import numpy as np
 np.random.seed(42)
 
 #%%
-cwd = os.getcwd()
+#cwd = os.getcwd()
+cwd = osp.dirname(os.path.abspath(__file__))
+
 Img_dir = osp.join(cwd, 'data', 'train')
 Mask_dir = osp.join(cwd, 'data', 'train_masks')
 
@@ -29,9 +32,13 @@ def get_names(path_list):
         path = '../../data/29bb3ece3180_11.jpg
         path.split('/')[-1].split('.')[0] == '29bb3ece3180_11'
     """
+    if sys.platform == 'win32':
+        print(f"your platform is {sys.platform}")
+        name_list = [i.split('\\')[-1].split('.')[0] for i in path_list]
 
-    name_list = [i.split('/')[-1].split('.')[0] for i in path_list]
-    
+    else: 
+        print(f"your platform is {sys.platform}")
+        name_list = [i.split('/')[-1].split('.')[0] for i in path_list]
 
     return sorted(name_list)
 
@@ -43,9 +50,9 @@ def run_split(Img_dir, Mask_dir):
     Img_list = sorted(glob(Img_dir + "/*.jpg"))
     Mask_list = sorted(glob(Mask_dir + "/*_mask.gif"))
 
-    name_list = get_names(Img_list)
 
-    
+    name_list = get_names(Img_list)
+  
 
 
     """ Data split
@@ -86,16 +93,12 @@ def run_split(Img_dir, Mask_dir):
 
 
 
-
-
 #%%
 if __name__ == '__main__':
 
     DATA_DIR = Path('data')
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     assert osp.isdir(osp.join(cwd, 'data', 'train')), 'Download the dataset first from the link: https://www.kaggle.com/c/carvana-image-masking-challenge/data '
-
-
 
 
     run_split(Img_dir, Mask_dir)
