@@ -100,8 +100,8 @@ def check_accuracy(loader, model, device="cuda"):
             """ Get data to cuda if possible
             """
             x = x.to(device)
-            y = y.to(device).unsqueeze(1) # gray scale 이미지이기 때문에 C 값은 없음 
-                                          # [B, C=1, H, W] -> [B, H, W]
+            y = y.to(device).unsqueeze(1) # gray scale 이미지이기 때문에 C=1 (=tensor 형태 맞춤) 
+                                          # [B, H, W] -> [B, C=1, H, W]
 
             """ forward 
             """
