@@ -39,8 +39,8 @@ def train_fn(train_loader, model, optimizer, loss_fn, scaler, DEVICE, BATCH_SIZE
         """
         data = data.to(device=DEVICE)  # 미니 베치 데이터를 device 에 로드 
         targets = targets.float().unsqueeze(1).to(device=DEVICE)    # 레이블 for supervised learning 
-                                                                    # gray scale 이미지이기 때문에 C 값은 없음
-                                                                    # [B, C=1, H, W] -> [B, H, W]
+                                                                    # gray scale 이미지이기 때문에 C=1 (=tensor 형태 맞춤)
+                                                                    # [B, H, W] -> [B, C=1, H, W] 
 
         """ Forward 
         """
