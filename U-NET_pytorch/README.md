@@ -15,6 +15,7 @@
 ## Set up your hyperparameters 
 * check ```cfg.yaml``` if you need to change your directory path. 
 * you can edit the hyperparameter setup for training.
+* [refer to a Hydra usage for configuring ML experiments](https://www.sscardapane.it/tutorials/hydra-tutorial/)
 
 <br/>
 
